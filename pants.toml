@@ -1,0 +1,23 @@
+[GLOBAL]
+pants_version = "2.14.0"
+pythonpath = ["%(buildroot)s/pants-utils/plugins"]
+backend_packages = [
+  "pants.backend.python",
+  "pants.backend.experimental.python",
+  "pants.backend.experimental.python.typecheck.pyright",
+]
+
+[source]
+marker_filenames = ["pyproject.toml"]
+
+[python]
+interpreter_constraints = [">=3.9, <3.10"]
+
+[python-bootstrap]
+search_path = ["<PATH>", "<PYENV>"]
+
+[pyright]
+version = "pyright@1.1.258"
+
+[anonymous-telemetry]
+enabled = false

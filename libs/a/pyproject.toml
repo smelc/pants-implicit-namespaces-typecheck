@@ -1,0 +1,23 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "mycorp-a"
+version = "0.0.1"
+description = "Library a"
+authors = [
+  "Clément Hurlin <clement@kaiko.ai>",
+]
+packages = [
+  { include = "mycorp" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+mycorp-b = "*"
+
+[tool.poetry.dev-dependencies]
+mycorp-b = {path = "../b", develop = false}
+
+[tool.pyright]
