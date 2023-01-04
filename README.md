@@ -37,33 +37,38 @@ Completed in 0.564sec
 
 ## With pants
 
+Pants fails typechecking `libs/a` in isolation 💣
+
 ```shell
-# from the repo root
-> PANTS_SHA=a4054868c11690874005999cb80100e4da107538 ./pants check ::
-11:05:32.08 [WARN] The target libs/a/mycorp/a/a.py:../../mycorp-a imports `mycorp.b`, but Pants cannot safely infer a dependency because more than one target owns this module, so it is ambiguous which to use: ['libs/b/mycorp/b/__init__.py', 'libs/b/mycorp/b/__init__.py:../../mycorp-b'].
+> PANTS_SHA=df1c5b2418d9c62622b6039bb0fcc91b08f1dee4 ./pants check libs/a::
+22:19:42.92 [ERROR] Completed: Typecheck using Pyright - pyright - pyright failed (exit code 1).
+Loading configuration file at /tmp/pants-sandbox-U297Ol/pyrightconfig.json
+Assuming Python version 3.10
+Assuming Python platform Linux
+Auto-excluding **/node_modules
+Auto-excluding **/__pycache__
+Auto-excluding **/.*
+Searching for source files
+Found 1 source file
+pyright 1.1.258
+/tmp/pants-sandbox-U297Ol/libs/a/mycorp/a/a_mod.py
+  /tmp/pants-sandbox-U297Ol/libs/a/mycorp/a/a_mod.py:1:20 - error: "b" is unknown import symbol (reportGeneralTypeIssues)
+1 error, 0 warnings, 0 informations 
+Completed in 0.727sec
 
-Please explicitly include the dependency you want in the `dependencies` field of libs/a/mycorp/a/a.py:../../mycorp-a, or ignore the ones you do not want by prefixing with `!` or `!!` so that one or no targets are left.
+stubPath /tmp/pants-sandbox-U297Ol/typings is not a valid directory.
 
-Alternatively, you can remove the ambiguity by deleting/changing some of the targets so that only 1 target owns this module. Refer to https://www.pantsbuild.org/v2.16/docs/troubleshooting#import-errors-and-missing-dependencies.
-11:05:32.08 [WARN] The target libs/a/mycorp/a/a.py imports `mycorp.b`, but Pants cannot safely infer a dependency because more than one target owns this module, so it is ambiguous which to use: ['libs/b/mycorp/b/__init__.py', 'libs/b/mycorp/b/__init__.py:../../mycorp-b'].
 
-Please explicitly include the dependency you want in the `dependencies` field of libs/a/mycorp/a/a.py, or ignore the ones you do not want by prefixing with `!` or `!!` so that one or no targets are left.
 
-Alternatively, you can remove the ambiguity by deleting/changing some of the targets so that only 1 target owns this module. Refer to https://www.pantsbuild.org/v2.16/docs/troubleshooting#import-errors-and-missing-dependencies.
-11:05:32.08 [WARN] Pants cannot infer owners for the following imports in the target libs/a/mycorp/a/a.py:../../mycorp-a:
+✕ pyright failed.
+```
 
-  * mycorp.b (line: 1)
+However, it succeeds typechecking the entire repo 🍰 ✨
 
-If you do not expect an import to be inferrable, add `# pants: no-infer-dep` to the import line. Otherwise, see https://www.pantsbuild.org/v2.16/docs/troubleshooting#import-errors-and-missing-dependencies for common problems.
-11:05:32.08 [WARN] Pants cannot infer owners for the following imports in the target libs/a/mycorp/a/a.py:
-
-  * mycorp.b (line: 1)
-
-If you do not expect an import to be inferrable, add `# pants: no-infer-dep` to the import line. Otherwise, see https://www.pantsbuild.org/v2.16/docs/troubleshooting#import-errors-and-missing-dependencies for common problems.
-11:05:32.59 [INFO] Completed: Building requirements.pex
-11:05:33.40 [INFO] Completed: Building requirements_venv.pex
-11:05:35.05 [ERROR] Completed: Typecheck using Pyright - pyright - pyright failed (exit code 1).
-Loading configuration file at /tmp/pants-sandbox-u0dO6d/pyrightconfig.json
+```shell
+> PANTS_SHA=df1c5b2418d9c62622b6039bb0fcc91b08f1dee4 ./pants check ::
+22:19:50.43 [INFO] Completed: Typecheck using Pyright - pyright - pyright succeeded.
+Loading configuration file at /tmp/pants-sandbox-9BvBCf/pyrightconfig.json
 Assuming Python version 3.10
 Assuming Python platform Linux
 Auto-excluding **/node_modules
@@ -72,10 +77,15 @@ Auto-excluding **/.*
 Searching for source files
 Found 3 source files
 pyright 1.1.258
-/tmp/pants-sandbox-u0dO6d/libs/a/mycorp/a/a.py
-  /tmp/pants-sandbox-u0dO6d/libs/a/mycorp/a/a.py:1:20 - error: "b" is unknown import symbol (reportGeneralTypeIssues)
-1 error, 0 warnings, 0 informations
-Completed in 0.752sec
+0 errors, 0 warnings, 0 informations 
+Completed in 0.745sec
 
-stubPath /tmp/pants-sandbox-u0dO6d/typings is not a valid directory.
+stubPath /tmp/pants-sandbox-9BvBCf/typings is not a valid directory.
+
+
+
+✓ pyright succeeded.
 ```
+
+Note that, in both cases, the correct number of files is found by pyright
+(see the `Found X source file(s)` line).
